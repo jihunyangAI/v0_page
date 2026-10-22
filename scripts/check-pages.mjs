@@ -28,12 +28,20 @@ const failures = []
 for (const file of files) {
   const html = readFileSync(file, 'utf8')
   if (html.includes('/_vercel/insights/')) failures.push(`${file}: Vercel Analytics enabled`)
-  for (const match of html.matchAll(/\b(?:href|src)="([^"]+)"/g)) {
+  // Connection hints identify origins, not exported files. Next emits a same-origin
+  // preconnect href="/" when next/font uses preload: false.
+  const markup = html.replace(/<!--[^]*?-->|<(script|style)\b[^>]*>[^]*?<\/\1\s*>/gi, match => {
+    return match.startsWith('<!--') ? '' : match.slice(0, match.indexOf('>') + 1)
+  })
+  for (const tag of markup.matchAll(/<[a-z][^>]*>/gi)) {
+    const rel = tag[0].match(/\srel="([^"]*)"/i)?.[1].toLowerCase().split(/\s+/) ?? []
+    if (/^<link\b/i.test(tag[0]) && rel.some(value => value === 'preconnect' || value === 'dns-prefetch')) continue
+    for (const match of tag[0].matchAll(/\s(?:href|src)="([^"]+)"/gi)) {
     const target = match[1].replaceAll('&amp;', '&')
     if (/^(?:[a-z][a-z\d+.-]*:|\/\/|#|\?)/i.test(target)) continue
     const pathname = decodeURIComponent(target.split(/[?#]/)[0])
     if (basePath && pathname.startsWith('/') && pathname !== basePath && !pathname.startsWith(`${basePath}/`)) {
-      failures.push(`${file}: URL missing basePath: ${target}`)
+      failures.push(`${file}: URL missing basePath: ${target} (${tag[0]})`)
       continue
     }
     const local = pathname.startsWith('/')
@@ -47,6 +55,7 @@ for (const file of files) {
       failures.push(`${file}: Missing local target: ${target}`)
     }
     checked++
+    }
   }
 }
 if (failures.length) throw new Error(failures.join('\n'))
