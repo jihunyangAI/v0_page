@@ -3,6 +3,12 @@ import { ArrowRight } from 'lucide-react'
 import { PostCard } from '@/components/post-card'
 import { getPostSummaries } from '@/lib/posts'
 import { siteConfig } from '@/lib/site'
+import { pageMetadata } from '@/lib/seo'
+
+export const metadata = {
+  ...pageMetadata('/', siteConfig.name, siteConfig.description),
+  title: { absolute: siteConfig.name },
+}
 
 export default function HomePage() {
   const latestPosts = getPostSummaries(6)

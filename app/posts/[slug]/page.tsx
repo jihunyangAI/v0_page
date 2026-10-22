@@ -1,5 +1,6 @@
 import { withBasePath } from '@/lib/paths'
 import type { Metadata } from 'next'
+import { pageMetadata } from '@/lib/seo'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -20,16 +21,16 @@ export async function generateMetadata({ params }: PageProps<'/posts/[slug]'>): 
   const { slug } = await params
   const post = getPostBySlug(slug)
   if (!post) return {}
+  const metadata = pageMetadata(`/posts/${encodeURIComponent(slug)}`, post.title, post.description, post.thumbnail)
   return {
-    title: post.title,
-    description: post.description,
+    ...metadata,
     openGraph: {
+      ...metadata.openGraph,
       type: 'article',
       title: post.title,
       description: post.description,
       publishedTime: post.date,
       tags: post.tags,
-      ...(post.thumbnail ? { images: [withBasePath(post.thumbnail)] } : {}),
     },
   }
 }

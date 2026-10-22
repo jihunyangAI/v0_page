@@ -2,8 +2,10 @@ import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import { PostsExplorer } from '@/components/posts-explorer'
 import { getAllTags, getPostSummaries } from '@/lib/posts'
+import { pageMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = {
+  ...pageMetadata('/posts', '전체 글', '조용한 문장에 공개된 모든 글을 최신순으로 모아 보고, 검색과 태그로 찾아볼 수 있습니다.'),
   title: '전체 글',
   description: '조용한 문장에 공개된 모든 글을 최신순으로 모아 보고, 검색과 태그로 찾아볼 수 있습니다.',
 }

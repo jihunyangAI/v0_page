@@ -5,6 +5,7 @@ import { Noto_Sans_KR, Noto_Serif_KR } from 'next/font/google'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { siteConfig } from '@/lib/site'
+import { getSiteOrigin, isIndexable } from '@/lib/seo'
 import './globals.css'
 
 const notoSans = Noto_Sans_KR({
@@ -22,6 +23,8 @@ const notoSerif = Noto_Serif_KR({
 })
 
 export const metadata: Metadata = {
+  ...(getSiteOrigin() ? { metadataBase: new URL(getSiteOrigin()!) } : {}),
+  robots: { index: isIndexable(), follow: isIndexable() },
   title: {
     default: siteConfig.name,
     template: `%s | ${siteConfig.name}`,

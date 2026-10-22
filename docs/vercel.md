@@ -39,7 +39,18 @@ vercel logs
 
 일상적인 Production 배포는 `v0_vercel` 브랜치에 커밋을 푸시하면 된다. `vercel deploy`는 기본적으로 Preview를 생성한다. CLI 연결 정보 `.vercel/`과 `.env.local`은 Git에 올리지 않는다.
 
-## 설정 근거
+## 대표 주소와 검색 노출
+
+- `SITE_URL`에는 운영 대표 주소의 origin(예: 자신의 HTTPS 도메인)을 설정한다. 경로·쿼리·사용자 정보는 허용하지 않는다. 커스텀 도메인 연결 후 이 값을 변경하고 다시 배포한다.
+- 별도 설정이 없으면 Vercel이 제공하는 `VERCEL_PROJECT_PRODUCTION_URL`을 HTTPS 대표 주소로 사용한다. Vercel 프로젝트의 시스템 환경 변수 자동 노출을 켠다. 임시 배포 주소인 `VERCEL_URL`은 대표 주소에 사용하지 않는다.
+- 홈·전체 글·각 글에 서로 다른 canonical과 Open Graph/Twitter 정보를 생성한다. 썸네일이 없는 글은 기존 Apple 아이콘을 작은 공유 이미지로 사용한다.
+- `/sitemap.xml`은 홈·글 목록·공개 글만 포함한다. `/robots.txt`는 Production에서 허용하고 Preview/개발 환경에서는 차단한다. 주소를 알 수 없는 비 Vercel production 빌드는 canonical을 생략하고 robots 차단·빈 sitemap을 제공하므로, 운영에는 반드시 대표 주소가 필요하다.
+- GitHub Pages에 같은 글이 남아 있으면 해당 브랜치에도 Vercel 대표 주소를 가리키는 canonical을 별도로 적용하거나 한 사이트만 운영하도록 결정한다. 이 브랜치의 변경은 `v0_deploy`에 자동 반영되지 않는다. Pages 자체 주소를 사용할 경우 `SITE_URL`은 origin, `NEXT_PUBLIC_BASE_PATH`는 저장소 경로를 맡는다.
+- 주소와 초안 제외 검증: `node scripts/check-seo.cjs`. 배포 후 홈·목록·글의 canonical 및 `/sitemap.xml`, `/robots.txt`를 확인하고 Google Search Console에 sitemap을 제출할 수 있다.
+
+공식 근거: [Next.js 메타데이터](https://nextjs.org/docs/app/api-reference/functions/generate-metadata), [사이트맵](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap), [Vercel 시스템 환경 변수](https://vercel.com/docs/environment-variables/system-environment-variables).
+
+## 기타 설정 근거
 
 - [Vercel Git 배포 설정](https://vercel.com/docs/project-configuration/git-configuration)
 - [Vercel 정적 프로젝트 설정](https://vercel.com/docs/project-configuration/vercel-json)

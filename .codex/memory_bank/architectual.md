@@ -1,5 +1,12 @@
 # 프로젝트 구조와 아키텍처
 
+## 검색 노출과 대표 주소 (2026-10-23)
+
+- `lib/seo.ts`가 검증된 HTTPS `SITE_URL` 또는 Vercel 시스템 `VERCEL_PROJECT_PRODUCTION_URL`에서 대표 origin을 얻는다. 커스텀 도메인 변경 후 SITE_URL 수정과 재배포가 필요하다. origin에 경로를 넣지 않고 Pages 경로는 기존 `NEXT_PUBLIC_BASE_PATH`가 처리한다.
+- 각 페이지가 `pageMetadata()`로 개별 canonical·Open Graph·Twitter를 생성한다. 루트 레이아웃은 공통 metadataBase/robots만 설정하므로 모든 글에 홈 canonical이 상속되지 않는다. 썸네일이 없으면 기존 Apple 아이콘을 사용한다.
+- `app/sitemap.ts`와 `app/robots.ts`는 정적 메타데이터 라우트다. sitemap은 `getPublishedPosts()`로 초안을 제외한다. Vercel Preview/개발 및 대표 주소 없는 Production은 검색을 차단한다. 주소 없는 Production에는 잘못된 URL을 만들지 않는다.
+- `scripts/check-seo.cjs`는 실제 TypeScript 모듈을 transpile해 URL 검증·경로별 canonical·공개 글 sitemap·초안 제외·Preview 차단·Pages 경로를 확인한다. 설정 안내는 `docs/vercel.md`를 참조한다.
+
 기준일: 2026-10-23. 프로젝트 루트는 `v0_page/`이며, 이 문서는 현재 소스를 기준으로 작성했다. 파일명 `architectual.md`는 사용자가 지정한 표기를 유지한다.
 
 ## 프로젝트 개요
