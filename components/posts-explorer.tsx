@@ -26,7 +26,7 @@ function syncUrl({ query, tag, page }: FilterState) {
   if (tag) params.set('tag', tag)
   if (page > 1) params.set('page', String(page))
   const search = params.toString()
-  window.history.replaceState(null, '', search ? `/posts?${search}` : '/posts')
+  window.history.replaceState(null, '', `${window.location.pathname}${search ? `?${search}` : ''}${window.location.hash}`)
 }
 
 export function PostsExplorer({ posts, tags }: PostsExplorerProps) {

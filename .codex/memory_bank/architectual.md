@@ -101,7 +101,7 @@ v0_page/
 
 `app/globals.css`에서 Tailwind, 애니메이션, shadcn 스타일을 불러온다. 밝은 배경과 파란 기본색의 CSS 토큰, 글꼴, 반응형 레이아웃, Markdown 본문 스타일을 관리한다. 공통 폰트는 `next/font/google`을 사용한다.
 
-`tsconfig.json`의 `@/*`는 프로젝트 루트를 가리킨다. `next.config.mjs`에는 `images.unoptimized: true`와 `typescript.ignoreBuildErrors: true`가 설정되어 있다. 따라서 빌드 성공만으로 타입 검사를 통과했다고 판단하지 않는다.
+`tsconfig.json`의 `@/*`는 프로젝트 루트를 가리킨다. `next.config.mjs`에는 `images.unoptimized: true`가 설정되어 있다. 기존 `typescript.ignoreBuildErrors` 옵션을 제거하여 빌드 시 타입 오류를 차단하고, 배포 워크플로에서도 별도로 타입 검사를 실행한다.
 
 ## 실행과 검증
 
@@ -131,3 +131,14 @@ corepack.cmd pnpm exec tsc --noEmit
 - 화면·탐색 경로: `app/`, 화면 조각: `components/`
 - 디자인 토큰·본문 스타일: `app/globals.css`
 - 구조·라우팅·데이터 흐름·실행 명령 변경: 이 문서
+
+
+## GitHub Pages 배포 (2026-10-23)
+
+- `.github/workflows/deploy-pages.yml`: `v0_deploy` push 또는 해당 브랜치 수동 실행으로 배포한다. Node.js 24와 packageManager에 지정된 pnpm으로 의존성을 설치하고, 정적 빌드·타입 검사·내부 링크 검사를 통과한 결과물을 배포한다.
+- `GITHUB_PAGES=true`일 때만 `output: export`, `trailingSlash: true`를 사용한다. 결과물은 `out/`, 캐시는 `.next/`이므로 로컬 빌드 전 개발 서버를 종료한다.
+- `NEXT_PUBLIC_BASE_PATH`는 configure-pages의 `base_path`에서 전달한다. `next/link`는 자동 접두사를 사용하고 네이티브 링크·이미지·메타데이터는 `lib/paths.ts`의 `withBasePath()`를 사용한다. 검색 URL은 현재 pathname을 유지한다.
+- Pages 빌드에서는 Vercel Analytics를 제외한다. `next/font/google`는 빌드 시 Google Fonts 네트워크 연결이 필요하다.
+- `scripts/check-pages.mjs` (`pnpm check:pages`)가 필수 HTML 파일, 모든 공개 글의 출력 및 초안의 비공개 여부, HTML 내부 링크·이미지·JS·CSS 경로와 basePath를 확인한다.
+- 저장소의 Pages 사용 자격 및 Settings → Pages → Source: GitHub Actions 설정이 선행되어야 한다. github-pages 환경의 배포 브랜치 제한에는 v0_deploy를 허용해야 한다. 비공개 저장소의 플랜 제약은 사용자가 결정한다.
+- 상세 설정과 로컬 확인은 `docs/github-pages.md`를 참조한다. 실제 배포 성공 여부는 Actions 실행과 공개 URL로 별도 검증한다.

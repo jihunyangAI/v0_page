@@ -1,3 +1,4 @@
+import { withBasePath } from '@/lib/paths'
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import { Noto_Sans_KR, Noto_Serif_KR } from 'next/font/google'
@@ -29,11 +30,11 @@ export const metadata: Metadata = {
   generator: 'v0.app',
   icons: {
     icon: [
-      { url: '/icon-light-32x32.png', media: '(prefers-color-scheme: light)' },
-      { url: '/icon-dark-32x32.png', media: '(prefers-color-scheme: dark)' },
-      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: withBasePath('/icon-light-32x32.png'), media: '(prefers-color-scheme: light)' },
+      { url: withBasePath('/icon-dark-32x32.png'), media: '(prefers-color-scheme: dark)' },
+      { url: withBasePath('/icon.svg'), type: 'image/svg+xml' },
     ],
-    apple: '/apple-icon.png',
+    apple: withBasePath('/apple-icon.png'),
   },
 }
 
@@ -61,7 +62,7 @@ export default function RootLayout({
           {children}
         </main>
         <SiteFooter />
-        {process.env.NODE_ENV === 'production' && <Analytics />}
+        {process.env.NODE_ENV === 'production' && process.env.GITHUB_PAGES !== 'true' && <Analytics />}
       </body>
     </html>
   )

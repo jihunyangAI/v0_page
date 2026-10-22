@@ -1,3 +1,4 @@
+import { withBasePath } from '@/lib/paths'
 import Image from 'next/image'
 import Link from 'next/link'
 import { formatDate, type PostSummary } from '@/lib/post-types'
@@ -37,7 +38,7 @@ export function PostCard({ post, priority = false, compact = false }: PostCardPr
         {post.thumbnail ? (
           <div className="relative aspect-[16/9] overflow-hidden border-b border-border bg-secondary">
             <Image
-              src={post.thumbnail}
+              src={withBasePath(post.thumbnail)}
               alt=""
               fill
               sizes="(min-width: 1024px) 360px, (min-width: 640px) 50vw, 100vw"

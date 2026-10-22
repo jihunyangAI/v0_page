@@ -14,3 +14,7 @@ __v0_jsx-dev-runtime.ts
 node_modules
 .next/
 .DS_Store
+# Static export and generated types
+out/
+next-env.d.ts
+*.tsbuildinfo

@@ -1,3 +1,4 @@
+import { withBasePath } from '@/lib/paths'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -28,7 +29,7 @@ export async function generateMetadata({ params }: PageProps<'/posts/[slug]'>): 
       description: post.description,
       publishedTime: post.date,
       tags: post.tags,
-      ...(post.thumbnail ? { images: [post.thumbnail] } : {}),
+      ...(post.thumbnail ? { images: [withBasePath(post.thumbnail)] } : {}),
     },
   }
 }
@@ -82,7 +83,7 @@ export default async function PostPage({ params }: PageProps<'/posts/[slug]'>) {
           {post.thumbnail ? (
             <div className="relative mb-12 aspect-[16/9] overflow-hidden rounded-xl border border-border bg-secondary">
               <Image
-                src={post.thumbnail}
+                src={withBasePath(post.thumbnail)}
                 alt=""
                 fill
                 priority

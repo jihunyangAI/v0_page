@@ -1,3 +1,4 @@
+import { withBasePath } from '@/lib/paths'
 import { MarkdownAsync, type Components } from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeSlug from 'rehype-slug'
@@ -29,12 +30,12 @@ const components: Components = {
   a({ node: _node, href = '', ...props }) {
     const isExternal = /^https?:\/\//.test(href)
     return (
-      <a href={href} {...props} {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})} />
+      <a href={withBasePath(href)} {...props} {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})} />
     )
   },
-  img({ node: _node, alt = '', ...props }) {
+  img({ node: _node, alt = '', src, ...props }) {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img alt={alt} loading="lazy" decoding="async" {...props} />
+    return <img src={typeof src === 'string' ? withBasePath(src) : src} alt={alt} loading="lazy" decoding="async" {...props} />
   },
 }
 
