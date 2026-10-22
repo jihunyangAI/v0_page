@@ -142,3 +142,11 @@ corepack.cmd pnpm exec tsc --noEmit
 - `scripts/check-pages.mjs` (`pnpm check:pages`)가 필수 HTML 파일, 모든 공개 글의 출력 및 초안의 비공개 여부, HTML 내부 링크·이미지·JS·CSS 경로와 basePath를 확인한다.
 - 저장소의 Pages 사용 자격 및 Settings → Pages → Source: GitHub Actions 설정이 선행되어야 한다. github-pages 환경의 배포 브랜치 제한에는 v0_deploy를 허용해야 한다. 비공개 저장소의 플랜 제약은 사용자가 결정한다.
 - 상세 설정과 로컬 확인은 `docs/github-pages.md`를 참조한다. 실제 배포 성공 여부는 Actions 실행과 공개 URL로 별도 검증한다.
+
+## Vercel 배포 (2026-10-23)
+
+- `v0_vercel` 브랜치의 `vercel.json`은 Next.js 프리셋, `pnpm install --frozen-lockfile`, `pnpm build`를 지정한다. 정적 설정만 필요하므로 별도 설정 패키지 의존성 없이 JSON을 사용한다.
+- `package.json`의 `engines.node`는 `24.x`다. Vercel에는 `ENABLE_EXPERIMENTAL_COREPACK=1`을 설정해 `packageManager`의 pnpm 버전을 사용한다.
+- `git.deploymentEnabled`는 이 파일이 적용되는 브랜치 중 `v0_vercel`만 허용한다. 파일이 없는 다른 브랜치까지 전역 차단하지는 않는다. Vercel 프로젝트의 Production Branch는 대시보드에서 별도로 `v0_vercel`로 설정해야 한다.
+- Root Directory는 저장소 루트이며 Output Directory는 Next.js 기본값이다. Vercel에 `GITHUB_PAGES`와 `NEXT_PUBLIC_BASE_PATH`를 설정하지 않는다. 기본 Next.js 빌드에서는 `/v0_page` 접두사와 `out/` 정적 내보내기를 사용하지 않는다.
+- 연결 및 확인 절차는 `docs/vercel.md`에 기록했다. 저장소 설정 작성과 실제 원격 프로젝트 연결·배포 성공은 구분하며, 성공 여부는 Vercel 배포 상태와 공개 URL로 검증한다.
